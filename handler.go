@@ -51,7 +51,7 @@ func processCallBack(update goTel.Update) {
 	case "addNote":
 		newNote := studyNotes{
 			CreatedAt: time.Now(),
-			UserId:      update.CallbackQuery.From.ID,
+			UserId:    update.CallbackQuery.From.ID,
 		}
 
 		message, err := bot.EditMessage(update.CallbackQuery.Message, "Give your Note an expressive title:")
@@ -152,7 +152,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		}
 		text := "Alright, Got it. You can now type the content of your note. Please send as a single message."
 		currentNote.Message, err = bot.EditMessage(currentNote.Message, text)
-		currentNote.CurrentStage ++
+		currentNote.CurrentStage++
 		if err != nil {
 			log.Println(err)
 			return
@@ -166,7 +166,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		}
 		text := "What's the title of the publication, or Video, or Article?"
 		currentNote.Message, err = bot.EditMessage(currentNote.Message, text)
-		currentNote.CurrentStage ++
+		currentNote.CurrentStage++
 		if err != nil {
 			log.Println(err)
 			return
@@ -180,10 +180,10 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		}
 		text := "What's the Category of your publications? Please enter a number as indicated.\n"
 		for i := 0; i < len(pubCategories); i++ {
-			text += fmt.Sprintf("%d: %s\n", i +1, pubCategories[i])
+			text += fmt.Sprintf("%d: %s\n", i+1, pubCategories[i])
 		}
 		currentNote.Message, err = bot.EditMessage(currentNote.Message, text)
-		currentNote.CurrentStage ++
+		currentNote.CurrentStage++
 		if err != nil {
 			log.Println(err)
 			return
@@ -194,7 +194,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 			log.Println(err)
 			text := "Please enter a valid number. \nWhat's the Category of your publications? Please enter a number as indicated.\n"
 			for i := 0; i < len(pubCategories); i++ {
-				text += fmt.Sprintf("%d: %s\n", i +1, pubCategories[i])
+				text += fmt.Sprintf("%d: %s\n", i+1, pubCategories[i])
 			}
 			err = bot.DeleteMessage(update.Message)
 			if err != nil {
@@ -214,7 +214,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		}
 		text := "Please enter the tags you want to add to this note. Separate multiple tags with a comma."
 		currentNote.Message, err = bot.EditMessage(currentNote.Message, text)
-		currentNote.CurrentStage ++
+		currentNote.CurrentStage++
 		if err != nil {
 			log.Println(err)
 			return
@@ -238,7 +238,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		currentNote.Data.Tags = allTags
 		text := "Alright then. All done. Note to be saved:\n\n"
 		text += fmt.Sprintf("Title: %s.\n\nPress 'OK' to continue.", currentNote.Data.Title)
-		bot.AddButton("OK","addNoteOk")
+		bot.AddButton("OK", "addNoteOk")
 		bot.AddButton("Cancel", "bail")
 		bot.MakeKeyboard(1)
 		currentNote.Message, err = bot.EditMessage(currentNote.Message, text)

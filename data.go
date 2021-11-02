@@ -17,28 +17,28 @@ import (
 
 // database tables
 type tags struct {
-	Id int64
-	Name string
+	Id        int64
+	Name      string
 	CreatedAt time.Time
 }
 
 type studyNotes struct {
-	Id int64
-	Title string
-	Body string
+	Id          int64
+	Title       string
+	Body        string
 	Publication string
-	Category string
-	Tags []tags
-	UserId int
-	CreatedAt time.Time
+	Category    string
+	Tags        []tags
+	UserId      int
+	CreatedAt   time.Time
 }
 
 // structure for processing notes
 type pendingNotes struct {
-	Stages int
+	Stages       int
 	CurrentStage int
-	Message goTelegram.Message
-	Data studyNotes
+	Message      goTelegram.Message
+	Data         studyNotes
 }
 
 func initDatabase() *gorm.DB {
@@ -62,6 +62,7 @@ func initDatabase() *gorm.DB {
 func createNote(note studyNotes) {
 	db.Create(note)
 }
+
 //
 //func listAllNotes() text {
 //
