@@ -49,7 +49,7 @@ func processCommand(update goTel.Update) {
 func processCallBack(update goTel.Update) {
 	switch update.CallbackQuery.Data {
 	case "addNote":
-		newNote := studyNotes{
+		newNote := studyNote{
 			CreatedAt: time.Now(),
 			UserId:    update.CallbackQuery.From.ID,
 		}
@@ -220,7 +220,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 			return
 		}
 	case 4:
-		var allTags []tags
+		var allTags []tag
 		details := update.Message.Text
 		err := bot.DeleteMessage(update.Message)
 		if err != nil {
@@ -228,7 +228,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		}
 		tempTags := strings.Split(details, ",")
 		for i := 0; i < len(tempTags); i++ {
-			newTag := tags{
+			newTag := tag{
 				Name:      strings.TrimSpace(tempTags[i]),
 				CreatedAt: time.Now(),
 			}

@@ -16,19 +16,20 @@ import (
 //}
 
 // database tables
-type tags struct {
+type tag struct {
 	Id        int64
 	Name      string
+	StudyNoteID int
 	CreatedAt time.Time
 }
 
-type studyNotes struct {
+type studyNote struct {
 	Id          int64
 	Title       string
 	Body        string
 	Publication string
 	Category    string
-	Tags        []tags
+	Tags        []tag
 	UserId      int
 	CreatedAt   time.Time
 }
@@ -37,8 +38,8 @@ type studyNotes struct {
 type pendingNotes struct {
 	Stages       int
 	CurrentStage int
-	Message      goTelegram.Message
-	Data         studyNotes
+	Message goTelegram.Message
+	Data    studyNote
 }
 
 func initDatabase() *gorm.DB {
@@ -49,7 +50,7 @@ func initDatabase() *gorm.DB {
 		log.Fatalln(err)
 		return nil
 	}
-	err = db.AutoMigrate(&tags{}, &studyNotes{})
+	err = db.AutoMigrate(&tag{}, &studyNote{})
 	if err != nil {
 		log.Println("error with auto migration")
 		log.Fatalln(err)
@@ -59,7 +60,7 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-func createNote(note studyNotes) {
+func createNote(note studyNote) {
 	db.Create(note)
 }
 
