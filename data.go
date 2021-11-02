@@ -2,15 +2,20 @@ package main
 
 import (
 	"github.com/yoruba-codigy/goTelegram"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"log"
+	"os"
 	"time"
 )
 
-type category struct {
-	Id int64
-	Name string
-	CreatedAt time.Time
-}
+//type category struct {
+//	ID int64
+//	Name string
+//	CreatedAt time.Time
+//}
 
+// database tables
 type tags struct {
 	Id int64
 	Name string
@@ -22,12 +27,13 @@ type studyNotes struct {
 	Title string
 	Body string
 	Publication string
-	Category category
+	Category string
 	Tags []tags
 	UserId int
 	CreatedAt time.Time
 }
 
+// structure for processing notes
 type pendingNotes struct {
 	Stages int
 	CurrentStage int
@@ -35,21 +41,28 @@ type pendingNotes struct {
 	Data studyNotes
 }
 
-//func createSchema(db *pg.DB) error {
-//	models := []interface{}{
-//		(*category)(nil),
-//		(*tags)(nil),
-//		(*studyNotes)(nil),
-//	}
+func initDatabase() *gorm.DB {
+	connectionLink := os.Getenv("DATABASE_URL")
+	db, err := gorm.Open(postgres.Open(connectionLink), &gorm.Config{})
+	if err != nil {
+		log.Println("Can't connect to db")
+		log.Fatalln(err)
+		return nil
+	}
+	err = db.AutoMigrate(&tags{}, &studyNotes{})
+	if err != nil {
+		log.Println("error with auto migration")
+		log.Fatalln(err)
+		return nil
+	}
+
+	return db
+}
+
+func createNote(note studyNotes) {
+	db.Create(note)
+}
 //
-//	for _, model := range models {
-//		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
-//			Temp: true,
-//		})
-//		if err != nil {
-//			return err
-//		}
-//	}
+//func listAllNotes() text {
 //
-//	return nil
 //}

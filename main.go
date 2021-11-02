@@ -3,17 +3,22 @@ package main
 import (
 	"fmt"
 	goTel "github.com/yoruba-codigy/goTelegram"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 var bot goTel.Bot
 var notesList map[int]*pendingNotes
+var pubCategories []string
+var db *gorm.DB
 
 func main() {
+	db = initDatabase()
 	notesList = make(map[int]*pendingNotes)
+	pubCategories = []string{"Article", "Bible", "Broadcast", "Brochure", "Meetings & Conventions", "Magazines",
+		"Special Programs"}
 
 	var err error
 	bot, err = goTel.NewBot(os.Getenv("bot_token"))
@@ -24,11 +29,11 @@ func main() {
 	fmt.Println(bot.Me.Firstname, bot.Me.ID)
 	bot.SetHandler(handler)
 
-	log.Println(time.Now(), ": Starting Server...")
+	log.Println("Starting Server...")
 	err = http.ListenAndServe(":" + os.Getenv("port"), http.HandlerFunc(bot.UpdateHandler))
 
 	if err != nil {
-		log.Println(time.Now(), ":", err)
+		log.Println(err)
 		log.Fatalln(err)
 	}
 }
