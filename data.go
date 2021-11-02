@@ -50,7 +50,7 @@ func initDatabase() *gorm.DB {
 		log.Fatalln(err)
 		return nil
 	}
-	err = db.AutoMigrate(&tag{}, &studyNote{})
+	err = db.AutoMigrate(&studyNote{}, &tag{})
 	if err != nil {
 		log.Println("error with auto migration")
 		log.Fatalln(err)
