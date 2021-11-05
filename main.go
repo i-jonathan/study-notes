@@ -32,7 +32,7 @@ func main() {
 	bot.SetHandler(handler)
 
 	log.Println("Starting Server...")
-	err = http.ListenAndServe(":"+os.Getenv("port"), http.HandlerFunc(bot.UpdateHandler))
+	err = http.ListenAndServe(":"+os.Getenv("PORT"), http.HandlerFunc(bot.UpdateHandler))
 
 	if err != nil {
 		log.Println(err)
