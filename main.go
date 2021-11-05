@@ -9,10 +9,13 @@ import (
 	"os"
 )
 
-var bot goTel.Bot
-var notesList map[int]*pendingNotes
-var pubCategories []string
-var db *gorm.DB
+var (
+	bot goTel.Bot
+	notesList map[int]*pendingNotes
+	pubCategories []string
+	db *gorm.DB
+	err error
+)
 
 func main() {
 	db = initDatabase()
@@ -20,7 +23,6 @@ func main() {
 	pubCategories = []string{"Article", "Bible", "Broadcast", "Brochure", "Meetings & Conventions", "Magazines",
 		"Special Programs"}
 
-	var err error
 	bot, err = goTel.NewBot(os.Getenv("bot_token"))
 	if err != nil {
 		log.Println(err)

@@ -17,14 +17,14 @@ import (
 
 // database tables
 type tag struct {
-	Id        int64
+	ID        int64
 	Name      string
-	NoteID int
+	NoteID    int
 	CreatedAt time.Time
 }
 
 type studyNote struct {
-	Id          int64
+	ID          int64
 	Title       string
 	Body        string
 	Publication string
@@ -38,8 +38,8 @@ type studyNote struct {
 type pendingNotes struct {
 	Stages       int
 	CurrentStage int
-	Message goTelegram.Message
-	Data    studyNote
+	Message      goTelegram.Message
+	Data         studyNote
 }
 
 func initDatabase() *gorm.DB {
