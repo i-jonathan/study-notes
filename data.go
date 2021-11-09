@@ -61,7 +61,7 @@ func initDatabase() *gorm.DB {
 }
 
 func createNote(note studyNote) {
-	db.Create(note)
+	db.Create(&note)
 }
 
 //
