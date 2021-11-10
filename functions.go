@@ -104,4 +104,5 @@ func viewNote(callBackData string) string {
 	bot.AddButton("Delete", "delete-"+strconv.FormatInt(note.ID, 10))
 	bot.MakeKeyboard(2)
 	bot.AddButton("Menu", "mainMenu")
+	return text
 }
