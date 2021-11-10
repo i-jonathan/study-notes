@@ -48,8 +48,10 @@ func processCommand(update goTel.Update) {
 
 func processCallBack(update goTel.Update) {
 	callBack := update.CallbackQuery.Data
-	if strings.HasPrefix(update.CallbackQuery.Data, "listNotes") {
+	if strings.HasPrefix(callBack, "listNotes") {
 		callBack = "listNotes"
+	} else if strings.HasPrefix(callBack, "note") {
+		callBack = "note"
 	}
 	switch callBack {
 	case "addNote":
@@ -97,7 +99,13 @@ func processCallBack(update goTel.Update) {
 			delete(notesList, update.CallbackQuery.From.ID)
 		}
 	case "listNotes":
-		text := listAllNotes(update.CallbackQuery.Data)
+		text := listAllNotes(callBack)
+		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
+		if err != nil {
+			log.Println(err)
+		}
+	case "note":
+		text := viewNote(callBack)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
