@@ -54,9 +54,8 @@ func processCallBack(update goTel.Update) {
 		callBack = "note"
 	} else if strings.HasPrefix(callBack, "delete") {
 		callBack = "delete"
-	} else if strings.HasPrefix(callBack, "deleteConfirm") {
-		log.Println("test 0")
-		callBack = "deleteConfirm"
+	} else if strings.HasPrefix(callBack, "confirmDelete") {
+		callBack = "confirmDelete"
 	}
 	switch callBack {
 	case "addNote":
@@ -117,14 +116,14 @@ func processCallBack(update goTel.Update) {
 		}
 	case "delete":
 		text := "Press Ok to Confirm. Cancel to, you know, cancel."
-		bot.AddButton("OK", "deleteConfirm-"+strings.Split(update.CallbackQuery.Data, "-")[1])
+		bot.AddButton("OK", "confirmDelete-"+strings.Split(update.CallbackQuery.Data, "-")[1])
 		bot.AddButton("Cancel", "mainMenu")
 		bot.MakeKeyboard(1)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
 		}
-	case "deleteConfirm":
+	case "confirmDelete":
 		log.Println("test 1")
 		text := deleteNote(update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
