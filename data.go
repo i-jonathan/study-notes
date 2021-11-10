@@ -87,7 +87,7 @@ func listAllNotes(callBackData string) string {
 		}
 		bot.AddButton(strconv.Itoa(i+1), "note-"+strconv.FormatInt(note.ID, 10))
 	}
-	bot.MakeKeyboard(8)
+	bot.MakeKeyboard(len(notes))
 
 	var tempNotes []studyNote
 	var count int64
@@ -105,6 +105,7 @@ func listAllNotes(callBackData string) string {
 	if col != 0 {
 		bot.MakeKeyboard(2)
 	}
+
 	bot.AddButton("Menu", "mainMenu")
 	bot.MakeKeyboard(1)
 	return text
