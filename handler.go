@@ -55,6 +55,7 @@ func processCallBack(update goTel.Update) {
 	} else if strings.HasPrefix(callBack, "delete") {
 		callBack = "delete"
 	} else if strings.HasPrefix(callBack, "deleteConfirm") {
+		log.Println("test 0")
 		callBack = "deleteConfirm"
 	}
 	switch callBack {
