@@ -77,7 +77,8 @@ func listAllNotes() string {
 
 	var text string
 	for i, note := range notes {
-		text += fmt.Sprintf("%d. %s.\n\n", i, note.Title)
+		text += fmt.Sprintf("\n%d. %s.\n", i+1, note.Title)
+		log.Println(note.Tags)
 		for _, t := range note.Tags {
 			text += fmt.Sprintf("#%s ", t.Name)
 		}

@@ -95,6 +95,7 @@ func processCallBack(update goTel.Update) {
 	case "listNotes":
 		text := listAllNotes()
 		bot.AddButton("Menu", "mainMenu")
+		bot.MakeKeyboard(1)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
