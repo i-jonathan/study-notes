@@ -50,7 +50,8 @@ func processCallBack(update goTel.Update) {
 	callBack := update.CallbackQuery.Data
 	if strings.HasPrefix(callBack, "listNotes") {
 		callBack = "listNotes"
-	} else if strings.HasPrefix(callBack, "note") {
+	}
+	if strings.HasPrefix(callBack, "note") {
 		callBack = "note"
 	}
 	switch callBack {
