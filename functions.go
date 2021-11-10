@@ -106,3 +106,21 @@ func viewNote(callBackData string) string {
 	bot.AddButton("Menu", "mainMenu")
 	return text
 }
+
+func deleteNote(callBackData string) string {
+	noteId, err := strconv.Atoi(strings.Split(callBackData, "-")[1])
+	if err != nil {
+		log.Println(err)
+		return "An error Occurred."
+	}
+	var tags []tag
+
+	db.Find(&tags, "note_id = ?", noteId)
+	for _, t := range tags {
+		db.Delete(&t)
+	}
+
+	db.Delete(&studyNote{}, noteId)
+	bot.AddButton("Menu", "mainMenu")
+	return "Note Deleted"
+}
