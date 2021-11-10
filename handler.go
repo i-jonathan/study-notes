@@ -100,13 +100,13 @@ func processCallBack(update goTel.Update) {
 			delete(notesList, update.CallbackQuery.From.ID)
 		}
 	case "listNotes":
-		text := listAllNotes(callBack)
+		text := listAllNotes(update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
 		}
 	case "note":
-		text := viewNote(callBack)
+		text := viewNote(update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
