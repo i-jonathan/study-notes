@@ -118,6 +118,7 @@ func processCallBack(update goTel.Update) {
 		text := "Press Ok to Confirm. Cancel to, you know, cancel."
 		bot.AddButton("OK", "deleteConfirm-"+strings.Split(update.CallbackQuery.Data, "-")[1])
 		bot.AddButton("Cancel", "mainMenu")
+		bot.MakeKeyboard(1)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
