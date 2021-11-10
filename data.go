@@ -62,6 +62,7 @@ func initDatabase() *gorm.DB {
 }
 
 func createNote(note studyNote) bool {
+	log.Println(note.Tags)
 	err := db.Create(&note).Error
 	if err != nil {
 		log.Println(err)
