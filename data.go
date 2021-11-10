@@ -5,6 +5,7 @@ import (
 	"github.com/yoruba-codigy/goTelegram"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"log"
 	"os"
 	"time"
@@ -74,7 +75,7 @@ func createNote(note studyNote) bool {
 
 func listAllNotes() string {
 	var notes []studyNote
-	db.Find(&notes)
+	db.Preload(clause.Associations).Find(&notes)
 
 	var text string
 	for i, note := range notes {
