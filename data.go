@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/yoruba-codigy/goTelegram"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -60,11 +61,27 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-func createNote(note studyNote) {
-	db.Create(&note)
+func createNote(note studyNote) bool {
+	err := db.Create(&note).Error
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
 }
 
-//
-//func listAllNotes() text {
-//
-//}
+
+func listAllNotes() string {
+	var notes []studyNote
+	db.Find(&notes)
+
+	var text string
+	for i, note := range notes {
+		text += fmt.Sprintf("%d. %s.\n\n", i, note.Title)
+		for _, t := range note.Tags {
+			text += fmt.Sprintf("#%s ", t.Name)
+		}
+	}
+
+	return text
+}

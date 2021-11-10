@@ -73,12 +73,31 @@ func processCallBack(update goTel.Update) {
 		mainMenu(update)
 	case "addNoteOk":
 		// run function to insert note in DB
-		createNote(notesList[update.CallbackQuery.From.ID].Data)
+		created := createNote(notesList[update.CallbackQuery.From.ID].Data)
+		text := "An error occurred."
+		if created {
+			text = "Your Note has been Created."
+		}
+		bot.AddButton("Menu", "mainMenu")
+		bot.MakeKeyboard(1)
+		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
+		if err != nil {
+			log.Println(err)
+			mainMenu(update)
+		}
+		delete(notesList, update.CallbackQuery.From.ID)
 	case "bail":
 		mainMenu(update)
 		currentNote := notesList[update.CallbackQuery.From.ID]
 		if currentNote != nil {
 			delete(notesList, update.CallbackQuery.From.ID)
+		}
+	case "listNotes":
+		text := listAllNotes()
+		bot.AddButton("Menu", "mainMenu")
+		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
+		if err != nil {
+			log.Println(err)
 		}
 	}
 }
