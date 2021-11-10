@@ -47,7 +47,11 @@ func processCommand(update goTel.Update) {
 }
 
 func processCallBack(update goTel.Update) {
-	switch update.CallbackQuery.Data {
+	callBack := update.CallbackQuery.Data
+	if strings.HasPrefix(update.CallbackQuery.Data, "listNotes") {
+		callBack = "listNotes"
+	}
+	switch callBack {
 	case "addNote":
 		newNote := studyNote{
 			CreatedAt: time.Now(),
@@ -93,9 +97,7 @@ func processCallBack(update goTel.Update) {
 			delete(notesList, update.CallbackQuery.From.ID)
 		}
 	case "listNotes":
-		text := listAllNotes()
-		bot.AddButton("Menu", "mainMenu")
-		bot.MakeKeyboard(1)
+		text := listAllNotes(update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
@@ -108,7 +110,7 @@ func mainMenu(update goTel.Update) {
 	rand.Seed(time.Now().Unix())
 	text := greetings[rand.Intn(len(greetings))] + ", "
 	bot.AddButton("Create Note", "addNote")
-	bot.AddButton("List Notes", "listNotes")
+	bot.AddButton("List Notes", "listNotes-1")
 	bot.AddButton("List Tags", "listTags")
 	bot.AddButton("List By Tags", "tagList")
 	bot.AddButton("List By Category", "categoryList")

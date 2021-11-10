@@ -8,6 +8,8 @@ import (
 	"gorm.io/gorm/clause"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -63,7 +65,6 @@ func initDatabase() *gorm.DB {
 }
 
 func createNote(note studyNote) bool {
-	log.Println(note.Tags)
 	err := db.Create(&note).Error
 	if err != nil {
 		log.Println(err)
@@ -73,18 +74,41 @@ func createNote(note studyNote) bool {
 }
 
 
-func listAllNotes() string {
+func listAllNotes(callBackData string) string {
 	var notes []studyNote
-	db.Preload(clause.Associations).Find(&notes)
+	page, _ := strconv.Atoi(strings.Split(callBackData, "-")[1])
+	db.Preload(clause.Associations).Scopes(paginate(page)).Find(&notes)
 
 	var text string
 	for i, note := range notes {
-		text += fmt.Sprintf("\n%d. %s.\n", i+1, note.Title)
-		log.Println(note.Tags)
+		text += fmt.Sprintf("\n\n%d. %s.\n\n", i+1, note.Title)
 		for _, t := range note.Tags {
-			text += fmt.Sprintf("#%s ", t.Name)
+			text += fmt.Sprintf("#%s  ", t.Name)
 		}
+		bot.AddButton(strconv.Itoa(i+1), "note-"+strconv.FormatInt(note.ID, 10))
 	}
+	bot.MakeKeyboard(8)
 
+	var tempNotes []studyNote
+	var count int64
+	db.Find(&tempNotes).Count(&count)
+
+	if page > 1 {
+		bot.AddButton("Prev", "listNotes-"+strconv.Itoa(page-1))
+	}
+	if int64(page * 8) < count {
+		bot.AddButton("Next", "listNotes-"+strconv.Itoa(page+1))
+	}
+	bot.MakeKeyboard(2)
+	bot.AddButton("Menu", "mainMenu")
+	bot.MakeKeyboard(1)
 	return text
+}
+
+func paginate(page int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		pageSize := 8
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }
