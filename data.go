@@ -93,13 +93,18 @@ func listAllNotes(callBackData string) string {
 	var count int64
 	db.Find(&tempNotes).Count(&count)
 
+	col := 0
 	if page > 1 {
 		bot.AddButton("Prev", "listNotes-"+strconv.Itoa(page-1))
+		col += 1
 	}
 	if int64(page * 8) < count {
 		bot.AddButton("Next", "listNotes-"+strconv.Itoa(page+1))
+		col += 1
 	}
-	bot.MakeKeyboard(2)
+	if col != 0 {
+		bot.MakeKeyboard(2)
+	}
 	bot.AddButton("Menu", "mainMenu")
 	bot.MakeKeyboard(1)
 	return text
