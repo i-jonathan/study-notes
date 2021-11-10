@@ -240,7 +240,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 			return
 		}
 	case 4:
-		var allTags []tag
+		//var allTags []tag
 		details := update.Message.Text
 		err := bot.DeleteMessage(update.Message)
 		if err != nil {
@@ -253,9 +253,9 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 				CreatedAt: time.Now(),
 			}
 
-			allTags = append(allTags, newTag)
+			currentNote.Data.Tags = append(currentNote.Data.Tags, newTag)
 		}
-		currentNote.Data.Tags = allTags
+		//currentNote.Data.Tags = append(currentNote.Data.Tags, allTags
 		text := "Alright then. All done. Note to be saved:\n\n"
 		text += fmt.Sprintf("Title: %s.\n\nPress 'OK' to continue.", currentNote.Data.Title)
 		bot.AddButton("OK", "addNoteOk")
