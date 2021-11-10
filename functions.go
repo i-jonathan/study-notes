@@ -108,6 +108,7 @@ func viewNote(callBackData string) string {
 }
 
 func deleteNote(callBackData string) string {
+	log.Println("test 2")
 	noteId, err := strconv.Atoi(strings.Split(callBackData, "-")[1])
 	if err != nil {
 		log.Println(err)

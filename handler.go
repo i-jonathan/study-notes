@@ -124,6 +124,7 @@ func processCallBack(update goTel.Update) {
 			log.Println(err)
 		}
 	case "deleteConfirm":
+		log.Println("test 1")
 		text := deleteNote(update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
