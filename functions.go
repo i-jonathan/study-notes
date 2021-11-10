@@ -121,6 +121,8 @@ func deleteNote(callBackData string) string {
 	}
 
 	db.Delete(&studyNote{}, noteId)
+	// todo add layer of confirmation
 	bot.AddButton("Menu", "mainMenu")
+	bot.MakeKeyboard(1)
 	return "Note Deleted"
 }
