@@ -126,3 +126,19 @@ func deleteNote(callBackData string) string {
 	bot.MakeKeyboard(1)
 	return "Note Deleted"
 }
+
+func listTags() string {
+	var tags []tag
+	db.Find(&tags)
+	tagNames := make(map[string]bool)
+	var text string
+
+	for _, t := range tags {
+		if _, val := tagNames[t.Name]; !val {
+			tagNames[t.Name] = true
+			text += "#" + t.Name + "  "
+		}
+	}
+
+	return text
+}
