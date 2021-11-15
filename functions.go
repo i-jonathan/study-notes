@@ -38,10 +38,16 @@ func createNote(note studyNote) bool {
 	return true
 }
 
-func listAllNotes(callBackData string) string {
+func listAllNotes(callBackData string, userId int) string {
 	var notes []studyNote
 	page, _ := strconv.Atoi(strings.Split(callBackData, "-")[1])
-	db.Preload(clause.Associations).Scopes(paginate(page)).Find(&notes)
+	db.Preload(clause.Associations).Scopes(paginate(page)).Find(&notes, "user_id = ?", userId)
+
+	if len(notes) < 1 {
+		bot.AddButton("Menu", "mainMenu")
+		bot.MakeKeyboard(1)
+		return "No notes found."
+	}
 
 	var text string
 	for i, note := range notes {
@@ -127,10 +133,14 @@ func deleteNote(callBackData string) string {
 	return "Note Deleted"
 }
 
-func listTags() string {
-	log.Println("hi")
+func listTags(userId int) string {
 	var tags []tag
-	db.Find(&tags)
+	db.Find(&tags, "user_id = ?", userId)
+
+	if len(tags) < 1 {
+		return "No tags found"
+	}
+
 	tagNames := make(map[string]bool)
 	var text string
 
@@ -144,3 +154,18 @@ func listTags() string {
 
 	return text
 }
+
+//func listNoteByTag(messageText string) string {
+//	tagNames := strings.Split(messageText, ",")
+//	for i, t := range tagNames {
+//		tagNames[i] = strings.Title(strings.TrimPrefix(t, "#"))
+//	}
+//	var tags []tag
+//	db.Preload(clause.Associations).Find(&tags, "name in ?", tagNames)
+//
+//	db.Joins("JOIN note_tags ON note.id = note_tags.note_id").Joins("JOIN tags on note_tags.tag_id = tag.id").Where("tag.name in ?", tags).  Select("notes.id", "title", "publication", "body", "category", "user_id").Find(&notes)
+//
+//	for _, t := range tags {
+//		t.Notes
+//	}
+//}

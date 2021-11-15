@@ -103,7 +103,7 @@ func processCallBack(update goTel.Update) {
 			delete(notesList, update.CallbackQuery.From.ID)
 		}
 	case "listNotes":
-		text := listAllNotes(update.CallbackQuery.Data)
+		text := listAllNotes(update.CallbackQuery.Data, update.CallbackQuery.From.ID)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
@@ -130,8 +130,9 @@ func processCallBack(update goTel.Update) {
 			log.Println(err)
 		}
 	case "listTags":
-		text := listTags()
+		text := listTags(update.CallbackQuery.From.ID)
 		bot.AddButton("Menu", "mainMenu")
+		bot.MakeKeyboard(1)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)
@@ -285,8 +286,9 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 		tempTags := strings.Split(details, ",")
 		for i := 0; i < len(tempTags); i++ {
 			newTag := tag{
-				Name:      strings.TrimSpace(tempTags[i]),
+				Name:      strings.Title(strings.TrimSpace(tempTags[i])),
 				CreatedAt: time.Now(),
+				UserId: update.CallbackQuery.From.ID,
 			}
 
 			currentNote.Data.Tags = append(currentNote.Data.Tags, newTag)

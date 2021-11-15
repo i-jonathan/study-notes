@@ -15,8 +15,8 @@ import (
 type tag struct {
 	ID        int64
 	Name      string
-	NoteID    int
 	CreatedAt time.Time
+	UserId 	  int
 }
 
 type studyNote struct {
@@ -25,7 +25,7 @@ type studyNote struct {
 	Body        string
 	Publication string
 	Category    string
-	Tags        []tag `gorm:"foreignKey:NoteID"`
+	Tags        []tag `gorm:"many2many:note_tags"`
 	UserId      int
 	CreatedAt   time.Time
 }
