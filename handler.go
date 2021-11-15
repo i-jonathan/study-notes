@@ -35,6 +35,21 @@ func processRawText(update goTel.Update) {
 		handleNoteQuestions(update, currentUserNote)
 		return
 	}
+
+	currentTagSearch := tagSearch[update.CallbackQuery.From.ID]
+	if currentTagSearch != nil {
+		text := "Search by: \n" + update.Message.Text + "Press OK to Continue"
+		currentTagSearch.Query = update.Message.Text
+		currentTagSearch.Page = 1
+		bot.AddButton("OK", "proceedSearch-1")
+		bot.AddButton("Cancel", "mainMenu")
+		bot.MakeKeyboard(1)
+		message, err := bot.EditMessage(currentTagSearch.Message, text)
+		if err != nil {
+			log.Println(err)
+		}
+		currentTagSearch.Message = message
+	}
 }
 
 func processCommand(update goTel.Update) {
@@ -56,6 +71,8 @@ func processCallBack(update goTel.Update) {
 		callBack = "delete"
 	} else if strings.HasPrefix(callBack, "confirmDelete") {
 		callBack = "confirmDelete"
+	} else if strings.HasPrefix(callBack, "proceedSearch") {
+		callBack = "proceedSearch"
 	}
 	switch callBack {
 	case "addNote":
@@ -80,7 +97,12 @@ func processCallBack(update goTel.Update) {
 
 		notesList[update.CallbackQuery.From.ID] = &processNote
 	case "mainMenu":
+	case "bail":
 		mainMenu(update)
+		currentNote := notesList[update.CallbackQuery.From.ID]
+		if currentNote != nil {
+			delete(notesList, update.CallbackQuery.From.ID)
+		}
 	case "addNoteOk":
 		// run function to insert note in DB
 		created := createNote(notesList[update.CallbackQuery.From.ID].Data)
@@ -96,12 +118,6 @@ func processCallBack(update goTel.Update) {
 			mainMenu(update)
 		}
 		delete(notesList, update.CallbackQuery.From.ID)
-	case "bail":
-		mainMenu(update)
-		currentNote := notesList[update.CallbackQuery.From.ID]
-		if currentNote != nil {
-			delete(notesList, update.CallbackQuery.From.ID)
-		}
 	case "listNotes":
 		text := listAllNotes(update.CallbackQuery.Data, update.CallbackQuery.From.ID)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
@@ -133,6 +149,21 @@ func processCallBack(update goTel.Update) {
 		text := listTags(update.CallbackQuery.From.ID)
 		bot.AddButton("Menu", "mainMenu")
 		bot.MakeKeyboard(1)
+		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
+		if err != nil {
+			log.Println(err)
+		}
+	case "tagList":
+		message, err := bot.EditMessage(update.CallbackQuery.Message, "Please enter the tags you want to filter by. " +
+			"(Separate multiple tags with a comma)")
+		newSearch := pendingSearch{Message: message}
+		tagSearch[update.CallbackQuery.From.ID] = &newSearch
+		if err != nil {
+			log.Println(err)
+		}
+	case "proceedSearch":
+		currentTagSearch := tagSearch[update.CallbackQuery.From.ID]
+		text := listNoteByTag(currentTagSearch, update.CallbackQuery.From.ID, update.CallbackQuery.Data)
 		_, err := bot.EditMessage(update.CallbackQuery.Message, text)
 		if err != nil {
 			log.Println(err)

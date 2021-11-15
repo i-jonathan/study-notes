@@ -61,7 +61,7 @@ func listAllNotes(callBackData string, userId int) string {
 
 	var tempNotes []studyNote
 	var count int64
-	db.Find(&tempNotes).Count(&count)
+	db.Find(&tempNotes, "user_id = ?", userId).Count(&count)
 
 	col := 0
 	if page > 1 {
@@ -155,17 +155,60 @@ func listTags(userId int) string {
 	return text
 }
 
-//func listNoteByTag(messageText string) string {
-//	tagNames := strings.Split(messageText, ",")
-//	for i, t := range tagNames {
-//		tagNames[i] = strings.Title(strings.TrimPrefix(t, "#"))
-//	}
-//	var tags []tag
-//	db.Preload(clause.Associations).Find(&tags, "name in ?", tagNames)
-//
-//	db.Joins("JOIN note_tags ON note.id = note_tags.note_id").Joins("JOIN tags on note_tags.tag_id = tag.id").Where("tag.name in ?", tags).  Select("notes.id", "title", "publication", "body", "category", "user_id").Find(&notes)
-//
-//	for _, t := range tags {
-//		t.Notes
-//	}
-//}
+func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) string {
+	page, err := strconv.Atoi(strings.Split(callBackData, "-")[1])
+	if err != nil {
+		log.Println(err)
+	}
+	tagNames := strings.Split(searchData.Message.Text, ",")
+	for i, t := range tagNames {
+		tagNames[i] = strings.Title(t)
+	}
+	var notes []studyNote
+
+	db.Joins("JOIN note_tags ON study_notes.id = note_tags.study_note_id").Joins(
+		"JOIN tags on note_tags.tag_id = tags.id and study_notes.user_id=tags.user_id").Where(
+			"tags.name in ?", tagNames).Where("tags.user_id = ?", userId).Select(
+				"study_notes.id", "title", "publication", "body", "category",
+				"study_notes.user_id").Scopes(paginate(page)).Find(&notes)
+
+	if len(notes) < 1 {
+		return "No notes Found."
+	}
+	var text string
+
+	for i, n := range notes {
+		text += fmt.Sprintf("%d. %s\n", i+1, n.Title)
+
+		for _, t := range n.Tags {
+			text += fmt.Sprintf("#%s  ", t.Name)
+		}
+		bot.AddButton(strconv.Itoa(i+1), "note-"+strconv.FormatInt(n.ID, 10))
+	}
+	bot.MakeKeyboard(len(notes))
+
+	var tempNotes []studyNote
+	var count int64
+	db.Joins("JOIN note_tags ON study_notes.id = note_tags.study_note_id").Joins(
+		"JOIN tags on note_tags.tag_id = tags.id and study_notes.user_id=tags.user_id").Where(
+		"tags.name in ?", tagNames).Where("tags.user_id = ?", userId).Select(
+		"study_notes.id", "title", "publication", "body", "category",
+		"study_notes.user_id").Find(&tempNotes).Count(&count)
+
+	col := 0
+	if page > 1 {
+		bot.AddButton("Prev", "listNotes-"+strconv.Itoa(page-1))
+		col += 1
+	}
+	if int64(page * 8) < count {
+		bot.AddButton("Next", "listNotes-"+strconv.Itoa(page+1))
+		col += 1
+	}
+	if col != 0 {
+		bot.MakeKeyboard(2)
+	}
+
+	bot.AddButton("Menu", "mainMenu")
+	bot.MakeKeyboard(1)
+	return text
+}

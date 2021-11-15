@@ -15,10 +15,12 @@ var (
 	pubCategories []string
 	db *gorm.DB
 	err error
+	tagSearch map[int]*pendingSearch
 )
 
 func main() {
 	db = initDatabase()
+	tagSearch = make(map[int]*pendingSearch)
 	notesList = make(map[int]*pendingNotes)
 	pubCategories = []string{"Article", "Bible", "Broadcast", "Brochure", "Meetings & Conventions", "Magazines",
 		"Special Programs"}

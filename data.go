@@ -37,3 +37,9 @@ type pendingNotes struct {
 	Message      goTelegram.Message
 	Data         studyNote
 }
+
+type pendingSearch struct {
+	Message goTelegram.Message
+	Query string
+	Page int
+}
