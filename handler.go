@@ -36,7 +36,7 @@ func processRawText(update goTel.Update) {
 		return
 	}
 
-	currentTagSearch := tagSearch[update.CallbackQuery.From.ID]
+	currentTagSearch := tagSearch[update.Message.From.ID]
 	if currentTagSearch != nil {
 		text := "Search by: \n" + update.Message.Text + "Press OK to Continue"
 		currentTagSearch.Query = update.Message.Text
@@ -97,11 +97,11 @@ func processCallBack(update goTel.Update) {
 
 		notesList[update.CallbackQuery.From.ID] = &processNote
 	case "mainMenu", "bail":
-		mainMenu(update)
 		currentNote := notesList[update.CallbackQuery.From.ID]
 		if currentNote != nil {
 			delete(notesList, update.CallbackQuery.From.ID)
 		}
+		mainMenu(update)
 	case "addNoteOk":
 		// run function to insert note in DB
 		created := createNote(notesList[update.CallbackQuery.From.ID].Data)
