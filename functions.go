@@ -166,11 +166,11 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 	}
 	var notes []studyNote
 
-	db.Joins("JOIN note_tags ON study_notes.id = note_tags.study_note_id").Joins(
+	db.Table("study_notes").Select(
+		"study_notes.id", "title", "publication", "body", "category",
+		"study_notes.user_id").Joins("JOIN note_tags ON study_notes.id = note_tags.study_note_id").Joins(
 		"JOIN tags on note_tags.tag_id = tags.id and study_notes.user_id=tags.user_id").Where(
-			"tags.name in ?", tagNames).Where("tags.user_id = ?", userId).Select(
-				"study_notes.id", "title", "publication", "body", "category",
-				"study_notes.user_id").Find(&notes)
+			"tags.name in ?", tagNames).Where("tags.user_id = ?", userId).Scan(&notes)
 	log.Println(notes)
 	if len(notes) < 1 {
 		return "No notes Found."
