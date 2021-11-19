@@ -160,7 +160,7 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 	if err != nil {
 		log.Println(err)
 	}
-	tagNames := strings.Split(searchData.Message.Text, ",")
+	tagNames := strings.Split(searchData.Query, ",")
 	for i, t := range tagNames {
 		tagNames[i] = strings.Title(t)
 		log.Println(t)
