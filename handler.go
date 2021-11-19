@@ -38,11 +38,15 @@ func processRawText(update goTel.Update) {
 
 	currentTagSearch := tagSearch[update.Message.From.ID]
 	if currentTagSearch != nil {
-		text := "Search by tags: \n" + update.Message.Text + "\nPress OK to Continue"
 		currentTagSearch.Query = update.Message.Text
+		err := bot.DeleteMessage(update.Message)
+		if err != nil {
+			log.Println(err)
+		}
+		text := "Search by tags: \n" + currentTagSearch.Query + "\nPress OK to Continue"
 		currentTagSearch.Page = 1
 		bot.AddButton("OK", "proceedSearch-1")
-		bot.AddButton("Cancel", "mainMenu")
+		bot.AddButton("Cancel", "bail")
 		bot.MakeKeyboard(1)
 		message, err := bot.EditMessage(currentTagSearch.Message, text)
 		if err != nil {
@@ -58,6 +62,8 @@ func processCommand(update goTel.Update) {
 	switch update.Command {
 	case "/start":
 		mainMenu(update)
+	case "/cancel":
+
 	}
 }
 
@@ -97,10 +103,6 @@ func processCallBack(update goTel.Update) {
 
 		notesList[update.CallbackQuery.From.ID] = &processNote
 	case "mainMenu", "bail":
-		currentNote := notesList[update.CallbackQuery.From.ID]
-		if currentNote != nil {
-			delete(notesList, update.CallbackQuery.From.ID)
-		}
 		mainMenu(update)
 	case "addNoteOk":
 		// run function to insert note in DB
@@ -167,6 +169,7 @@ func processCallBack(update goTel.Update) {
 		if err != nil {
 			log.Println(err)
 		}
+		delete(tagSearch, update.CallbackQuery.From.ID)
 	}
 }
 
@@ -180,8 +183,9 @@ func mainMenu(update goTel.Update) {
 	bot.AddButton("List By Tags", "tagList")
 	bot.AddButton("List By Category", "categoryList")
 	bot.MakeKeyboard(1)
-
+	var userID int
 	if update.Type == "text" {
+		userID = update.Message.From.ID
 		if update.Message.Chat.Type != "private" {
 			_, err := bot.SendMessage("Can't use this in a group.", update.Message.Chat)
 			if err != nil {
@@ -203,6 +207,7 @@ func mainMenu(update goTel.Update) {
 			log.Println("error when sending welcome message", err)
 		}
 	} else {
+		userID = update.CallbackQuery.From.ID
 		if update.CallbackQuery.Message.Chat.Type != "private" {
 			_, err := bot.SendMessage("Can't use this in a group.", update.Message.Chat)
 			if err != nil {
@@ -222,6 +227,15 @@ func mainMenu(update goTel.Update) {
 		if err != nil {
 			log.Println("error when sending welcome message", err)
 		}
+	}
+	currentNote := notesList[userID]
+	if currentNote != nil {
+		delete(notesList, userID)
+	}
+
+	currentSearch := tagSearch[userID]
+	if currentSearch != nil {
+		delete(tagSearch, userID)
 	}
 }
 

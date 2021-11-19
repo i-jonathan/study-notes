@@ -163,10 +163,7 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 	tagNames := strings.Split(searchData.Query, ",")
 	for i, t := range tagNames {
 		tagNames[i] = strings.Title(t)
-		log.Println(t)
-		log.Println(tagNames[i])
 	}
-	log.Println(tagNames)
 	var notes []studyNote
 
 	db.Joins("JOIN note_tags ON study_notes.id = note_tags.study_note_id").Joins(
@@ -175,10 +172,6 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 				"study_notes.id", "title", "publication", "body", "category",
 				"study_notes.user_id").Find(&notes)
 
-	//db.Raw("Select *\nfrom study_notes\njoin note_tags\nON study_notes.id = note_tags.study_note_id\nJOIN tags" +
-	//	" on note_tags.tag_id = tags.id and study_notes.user_id=tags.user_id\nwhere tags.name in " +
-	//	"('Ish', 'Isher')").Scan(&notes)
-	log.Println(notes)
 	if len(notes) < 1 {
 		return "No notes Found."
 	}
