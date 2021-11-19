@@ -96,8 +96,7 @@ func processCallBack(update goTel.Update) {
 		}
 
 		notesList[update.CallbackQuery.From.ID] = &processNote
-	case "mainMenu":
-	case "bail":
+	case "mainMenu", "bail":
 		mainMenu(update)
 		currentNote := notesList[update.CallbackQuery.From.ID]
 		if currentNote != nil {
@@ -319,7 +318,7 @@ func handleNoteQuestions(update goTel.Update, currentNote *pendingNotes) {
 			newTag := tag{
 				Name:      strings.Title(strings.TrimSpace(tempTags[i])),
 				CreatedAt: time.Now(),
-				UserId: update.CallbackQuery.From.ID,
+				UserId: update.Message.From.ID,
 			}
 
 			currentNote.Data.Tags = append(currentNote.Data.Tags, newTag)
