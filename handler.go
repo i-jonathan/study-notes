@@ -38,7 +38,7 @@ func processRawText(update goTel.Update) {
 
 	currentTagSearch := tagSearch[update.Message.From.ID]
 	if currentTagSearch != nil {
-		text := "Search by: \n" + update.Message.Text + "Press OK to Continue"
+		text := "Search by tags: \n" + update.Message.Text + "\nPress OK to Continue"
 		currentTagSearch.Query = update.Message.Text
 		currentTagSearch.Page = 1
 		bot.AddButton("OK", "proceedSearch-1")

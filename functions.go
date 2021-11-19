@@ -170,8 +170,8 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 		"JOIN tags on note_tags.tag_id = tags.id and study_notes.user_id=tags.user_id").Where(
 			"tags.name in ?", tagNames).Where("tags.user_id = ?", userId).Select(
 				"study_notes.id", "title", "publication", "body", "category",
-				"study_notes.user_id").Scopes(paginate(page)).Find(&notes)
-
+				"study_notes.user_id").Find(&notes)
+	log.Println(notes)
 	if len(notes) < 1 {
 		return "No notes Found."
 	}
