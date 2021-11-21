@@ -43,7 +43,7 @@ func processRawText(update goTel.Update) {
 		if err != nil {
 			log.Println(err)
 		}
-		text := "Search by tags: \n" + currentTagSearch.Query + "\nPress OK to Continue"
+		text := "Search by the following tags: \n\n" + currentTagSearch.Query + "\n\nPress OK to Continue"
 		currentTagSearch.Page = 1
 		bot.AddButton("OK", "proceedSearch-1")
 		bot.AddButton("Cancel", "bail")
@@ -155,6 +155,8 @@ func processCallBack(update goTel.Update) {
 			log.Println(err)
 		}
 	case "tagList":
+		bot.AddButton("Cancel", "mainMenu")
+		bot.MakeKeyboard(1)
 		message, err := bot.EditMessage(update.CallbackQuery.Message, "Please enter the tags you want to filter by. " +
 			"(Separate multiple tags with a comma)")
 		newSearch := pendingSearch{Message: message}

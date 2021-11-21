@@ -173,6 +173,8 @@ func listNoteByTag(searchData *pendingSearch, userId int, callBackData string) s
 				"study_notes.user_id").Find(&notes)
 
 	if len(notes) < 1 {
+		bot.AddButton("Menu", "mainMenu")
+		bot.MakeKeyboard(1)
 		return "No notes Found."
 	}
 	var text string
